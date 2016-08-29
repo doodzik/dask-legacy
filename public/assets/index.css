@@ -20,7 +20,6 @@ ul {
 }
 
 li {
-  /* flex-grow: 0.00001; */
   flex-grow: 1;
   transition: 150ms linear;
 

@@ -155,10 +155,11 @@
 
         localStorage.setItem("index", JSON.stringify(this._index));
 
-        _currentElements.reset()
+        task.currentElements.reset()
 
-        var value = store.findByIndex(this._index)
-        ul.dispatchEvent(new CustomEvent('new', { 'detail': value }))
+        var tasks = store.findByIndex(this._index)
+
+        ul.dispatchEvent(new CustomEvent('new', { 'detail': tasks }))
       }
       else {
         ul.dispatchEvent(new CustomEvent('new', { 'detail': [] }))
@@ -186,7 +187,7 @@
       localStorage.setItem("checkedElements", JSON.stringify(this._checkedElements));
     }
 
-    includes(i) {
+    includes (i) {
       return this._checkedElements.includes(i)
     }
 
@@ -198,24 +199,54 @@
 
   // Service
 
-  class Task {
+  class TaskList {
 
-    constructor() {
+    constructor(store) {
+      this.index           = new Index(store)
+      this.currentElements = new CurrentElements()
+      this.store           = store
     }
 
-    newDayReset() {
+    check(task_id) {
+      this.currentElements.add(task_id)
+
+      if (this.current.length === 0) {
+        this.index.move()
+      }
+
+      ul.dispatchEvent(new CustomEvent('remove', { 'detail': task_id }))
     }
 
+    get current () {
+
+      // reset if new day
+      var date = new Date();
+      date.setHours(5);
+      if (date > new Date()) {
+      // TODO fix reset bug
+      // if (date < new Date()) {
+        this.reset()
+      }
+
+      var self  = this
+      var tasks = this.store.findByIndex(this.index._index)
+      tasks     = tasks.filter(function (value, i) {
+        return !self.currentElements.includes(i)
+      })
+      return tasks
+    }
+
+    reset () {
+      this.currentElements.reset()
+      this.index.reset()
+    }
   }
-
-  var currentTask      = new Task()
-  var _currentElements = new CurrentElements()
-  var _index           = new Index(store)
-
 
   // View
 
-  var ul = document.getElementById("list");
+  var ul      = document.createElement("ul");
+  var content = document.getElementById("content");
+  content.appendChild(ul);
 
   function li (childNode) {
     var element = document.createElement("li");
@@ -225,8 +256,10 @@
 
   function taskElement (content, index) {
     var element = li(document.createTextNode(content))
+    element.dataset.index = index
     element.onclick = function() {
-      ul.dispatchEvent(new CustomEvent('remove', { 'detail': { task: this, index} }))
+      var task_id = +element.dataset.index
+      task.check(task_id)
     }
     return element
   }
@@ -237,46 +270,29 @@
     if(tasks.length === 0) {
       var element = li(document.createTextNode("no more tasks"))
       ul.appendChild(element);
-      _currentElements.reset()
-      _index.reset()
     }
     else {
       tasks.forEach(function (value, i) {
-        if (!_currentElements.includes(i)) {
-          var element = taskElement(value, i)
-          ul.appendChild(element);
-        }
+        var element = taskElement(value, i)
+        ul.appendChild(element);
       })
     }
   })
 
   ul.addEventListener('remove', function(e) {
-    var task  = e.detail.task
-    var index = e.detail.index
-
-    _currentElements.add(index)
+    var task = ul.querySelectorAll("[data-index='" + e.detail + "']")[0]
 
     task.classList.add('removed')
 
     setTimeout(function() {
       ul.removeChild(task);
-      if(!ul.childNodes.length) {
-        _index.move()
-      }
     }, 150)
   })
 
   // Init
 
-  // reset if new day
-  var date = new Date();
-  date.setHours(5);
-  if (date > new Date()) {
-    _currentElements.reset()
-    _index.reset()
-  }
+  var task = new TaskList(store)
 
-  var value = store.findByIndex(_index._index)
-  ul.dispatchEvent(new CustomEvent('new', { 'detail': value }))
+  ul.dispatchEvent(new CustomEvent('new', { 'detail': task.current }))
 
 })()
