@@ -1,18 +1,11 @@
 export var store = [
   [
-    [ "take out a bowl", "take out a cutting board", "take out small plate", "take out a cup" ],
-    // [ "take out a knife", "take out a spoon" ],
-    [ "take out a tea bag & put into cup", "milk", "oat", "banana" ]
+    [ "Drink Water", "change clothes" ],
+    [ "prepare breakfast" ],
+    [ "brushteeth" ],
+    [ "take keys with you", "check the door" ],
+    [ "anki" ],
   ],
-  // ["put water in the kettle", "put oat in bowl", "put milk into the bowl", "Put the bowl into the microwave for 2 minutes at 700W"],
-  //   ["pour hot water into the cup", "Put plate on cup", "Set an alarm for 8 minutes"],
-      // ["Cut the banana", "Throw the banana peal away", "put banana into the bowl", "stir the oat with the spoon"],
-      // ["put away dried dishes"],
-      // ["Clean the cutting board", "Clean the knife"],
-      // ["put away oat", "put away milk", "put away phone"],
-      // ["breathing exercises", "throw tea bag away"],
-      // ["Put away phone & eat"],
-      // ["clean bowl", "clean spoon", "clean cup", "clean table"]
 ]
 
 // glaswasser trinken

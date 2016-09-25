@@ -1,6 +1,7 @@
 import ArrayPersist from './ArrayPersist'
 import _ from 'lodash'
 
+// behaves like a stack
 export default class ArrayMultidim {
 
   constructor (arr) {
